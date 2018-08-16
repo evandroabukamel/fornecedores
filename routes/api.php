@@ -35,6 +35,24 @@ use Illuminate\Http\Request;
     return $request->user();
 });*/
 
+// App v1 API
+Route::group([
+    'middleware' => ['app', 'api.version:1'],
+    'namespace'  => 'App\Http\Controllers\App',
+    'prefix'     => 'api/v1',
+], function ($router) {
+    require base_path('routes/app_api.v1.php');
+});
+
+// App v2 API
+/*Route::group([
+    'middleware' => ['app', 'api.version:2'],
+    'namespace'  => 'App\Http\Controllers\App',
+    'prefix'     => 'api/v2',
+ ], function ($router) {
+    require base_path('routes/app_api.v2.php');
+ });*/
+
 Route::post('register', 'API\RegisterController@register');
 
 Route::middleware('auth:api')->group( function () {

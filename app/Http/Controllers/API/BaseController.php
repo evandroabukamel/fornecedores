@@ -8,6 +8,38 @@ use App\Http\Controllers\Controller as Controller;
 class BaseController extends Controller
 {
     /**
+     * @param string $resourceName
+     * @param array ...$args
+     *
+     * @return object
+     */
+    public function resource($resourceName, ...$args)
+    {
+        // Get's the request's api version, or the latest if undefined
+        $v = config('app.api_version', config('app.api_latest'));
+
+        $className = $this->getResourceClassname($resourceName, $v);
+        $class = new \ReflectionClass($className);
+        return $class->newInstanceArgs($args);
+    }
+
+    /**
+     * Parse Api\Resource for
+     * App\Http\Resources\Api\v{$v}\Resource
+     *
+     * @param string $className
+     * @param string $v
+     *
+     * @return string
+     */
+    protected function getResourceClassname($className, $v)
+    {
+        $re = '/.*\\\\(.*)/';
+        return 'App\Http\Resources\\' .
+            preg_replace($re, 'Api\\v' . $v . '\\\$1', $className);
+    }
+
+    /**
      * Success response method.
      *
      * @return \Illuminate\Http\Response
